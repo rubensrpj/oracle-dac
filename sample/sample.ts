@@ -1,11 +1,12 @@
-import { OdacConnection } from '..';
+import { OdacConnection,  } from '..';
 
 const teste = async () => {
-    const odac = new OdacConnection({ user: 'XXX', password: 'XXX', connectString: '10.0.1.10/WINT' });
-    const connection = await odac.open();
-    const result = await odac.query<{ QTDEREG: Number }>({ connection, command: 'SELECT 1 FROM DUAL', bindParameters: {} });
-    result === undefined ? console.log('no data found') : result.forEach(element => { console.log(element.QTDEREG) });
-    await odac.close(connection);
+    const odac = await OdacConnection.open({ user: 'PALMED', password: 'P7WINMED', connectString: '10.0.1.10/WINT' });
+    let result = await odac.getNewQuery().sql({ command: 'SELECT CODPROD FROM PCPRODUT WHERE ROWNUM < 50', bindParameters: {} });
+    result === undefined ? console.log('no data found') : result.forEach(element => { console.log(element) });
+    result = await odac.getNewQuery().sql({ command: 'SELECT CODCLI FROM PCCLIENT WHERE ROWNUM < 50', bindParameters: {} });
+    result === undefined ? console.log('no data found') : result.forEach(element => { console.log(element) });
+    await odac.close();
 }
 
 teste();
