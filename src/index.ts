@@ -137,4 +137,4 @@ namespace Odac {
     }
 }
 
-export default Odac;
+export = Odac;

@@ -1,4 +1,4 @@
-import { OdacConnection,  } from '..';
+import { OdacConnection,  } from '../lib';
 
 const teste = async () => {
     const odac = await OdacConnection.open({ user: 'PALMED', password: 'P7WINMED', connectString: '10.0.1.10/WINT' });
