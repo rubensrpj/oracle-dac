@@ -2,7 +2,8 @@
   "name": "oracle-dac",
   "version": "1.0.4",
   "description": "Oracle Data Acess",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "repository": "https://github.com/rubensrpj/oracle-dac.git",
   "author": "Rubens Pinheiro <rubens@atiz.com.br>",
   "license": "MIT",
@@ -19,5 +20,8 @@
     "ts-node-dev": "^1.1.8",
     "tsconfig-paths": "^3.14.0",
     "typescript": "^4.6.2"
-  }
+  },
+  "files": [
+    "lib/**/*"
+  ]
 }
