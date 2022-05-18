@@ -15,19 +15,20 @@ namespace Odac {
     export type OdacConnectParams = { user: string, password: string, connectString: string };
 
     /**
+     * Bind Params for commands
+     */
+     export type OdacBindParameters = Record<string, { type: number | string | undefined, val: any }>;
+
+
+    /**
     * Params for Query
     */
-    export type OdacQueryParams = { command: string, bindParameters: OdacBindParameters };
+    export type OdacQueryParams = { command: string, bindParameters: OdacBindParameters | OdacBindParameters[]};
 
     /**
     * Params for Execute
     */
-    export type OdacExecuteParams = { command: string, bindParameters: OdacBindParameters | OdacBindParameters[], autoCommit: boolean };
-
-    /**
-     * Bind Params for commands
-     */
-    export type OdacBindParameters = Record<string, { type: number | string | undefined, val: any }>;
+    export type OdacExecuteParams = { command: string, bindParameters: OdacBindParameters | OdacBindParameters[], autoCommit: boolean | true  };
 
     /**
     * Class for working with Oracle Database

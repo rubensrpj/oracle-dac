@@ -7,19 +7,19 @@ declare namespace Odac {
         password: string;
         connectString: string;
     };
-    type OdacQueryParams = {
-        command: string;
-        bindParameters: OdacBindParameters;
-    };
-    type OdacExecuteParams = {
-        command: string;
-        bindParameters: OdacBindParameters | OdacBindParameters[];
-        autoCommit: boolean;
-    };
     type OdacBindParameters = Record<string, {
         type: number | string | undefined;
         val: any;
     }>;
+    type OdacQueryParams = {
+        command: string;
+        bindParameters: OdacBindParameters | OdacBindParameters[];
+    };
+    type OdacExecuteParams = {
+        command: string;
+        bindParameters: OdacBindParameters | OdacBindParameters[];
+        autoCommit: boolean | true;
+    };
     class OdacConnection {
         private odacConnectParams;
         private connection;
