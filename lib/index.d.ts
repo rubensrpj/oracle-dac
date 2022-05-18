@@ -33,6 +33,7 @@ declare namespace Odac {
         sql<T>(odacQueryParams: OdacQueryParams): Promise<T[] | undefined>;
         execute(odacExecuteParams: OdacExecuteParams): Promise<number>;
         executeMany(odacExecuteParams: OdacExecuteParams): Promise<number>;
+        nextVal(sequenceName: string): Promise<number>;
     }
 }
 export = Odac;
