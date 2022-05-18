@@ -20,7 +20,7 @@ namespace Odac {
     /**
      * Bind Params for commands
      */
-     export type OdacBindParameters = Record<string, { dir: number; type: number | string | undefined, val: any }>;
+     export type OdacBindParameters = Record<string, { dir?: number; type: number | string | undefined, val: any }>;
 
 
     /**
@@ -115,7 +115,7 @@ namespace Odac {
 
         public async sql<T>(odacQueryParams: OdacQueryParams): Promise<T[] | undefined> {
             return await this.connection
-                .execute<T>(odacQueryParams.command.toUpperCase(), odacQueryParams.bindParameters, {
+                .execute<T>(odacQueryParams.command.toUpperCase(),  (odacQueryParams.bindParameters as OracleDB.BindParameters), {
                     outFormat: OracleDB.OUT_FORMAT_OBJECT,
                 }).then((resul) => {
                     return resul.rows
@@ -129,7 +129,7 @@ namespace Odac {
 
         public async execute(odacExecuteParams: OdacExecuteParams): Promise<number> {
             return await this.connection
-                .execute(odacExecuteParams.command.toUpperCase(), odacExecuteParams.bindParameters, { autoCommit: odacExecuteParams.autoCommit })
+                .execute(odacExecuteParams.command.toUpperCase(), (odacExecuteParams.bindParameters as OracleDB.BindParameters), { autoCommit: odacExecuteParams.autoCommit })
                 .then((resultado) => {
                     if (resultado.rowsAffected === undefined) return 0;
                     else return Promise.resolve(resultado.rowsAffected);
@@ -142,7 +142,7 @@ namespace Odac {
 
         public async executeMany(odacExecuteParams: OdacExecuteParams): Promise<number> {
             return await this.connection
-                .executeMany(odacExecuteParams.command.toUpperCase(), odacExecuteParams.bindParameters as BindParameters[], { autoCommit: odacExecuteParams.autoCommit })
+                .executeMany(odacExecuteParams.command.toUpperCase(), (odacExecuteParams.bindParameters as OracleDB.BindParameters) as BindParameters[], { autoCommit: odacExecuteParams.autoCommit })
                 .then((resultado) => {
                     if (resultado.rowsAffected === undefined) return 0;
                     else return Promise.resolve(resultado.rowsAffected);
