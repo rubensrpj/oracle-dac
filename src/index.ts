@@ -8,6 +8,9 @@ namespace Odac {
     export const odacNUMBER = OracleDB.NUMBER;
     export const odacSTRING = OracleDB.STRING;
     export const odacDATE = OracleDB.DATE;
+    export const odacBIND_IN = OracleDB.BIND_IN;
+    export const odacBIND_INOUT = OracleDB.BIND_INOUT;
+    export const odacBIND_OUT = OracleDB.BIND_OUT;
 
     /**
     * Params for the ODAC connection
@@ -17,7 +20,7 @@ namespace Odac {
     /**
      * Bind Params for commands
      */
-     export type OdacBindParameters = Record<string, { type: number | string | undefined, val: any }>;
+     export type OdacBindParameters = Record<string, { dir: number; type: number | string | undefined, val: any }>;
 
 
     /**
