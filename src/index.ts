@@ -95,6 +95,20 @@ namespace Odac {
             this.connection = connection;
         }
 
+        public async nextVal(sequenceName : string): Promise<number> {
+            return await this.connection
+                .execute(`SELECT ${sequenceName}.NEXTVAL AS SEQUENCE FROM DUAL`, [], {
+                    outFormat: OracleDB.OUT_FORMAT_OBJECT,
+                }).then((resul) => {
+                    if (resul.rows) return Number(resul.rows[0]);
+                    else return 0
+                })
+                .catch((error) => {
+                    console.error(['nextVal', error, sequenceName]);
+                    throw new Error(error);
+                });
+        }
+
         public async sql<T>(odacQueryParams: OdacQueryParams): Promise<T[] | undefined> {
             return await this.connection
                 .execute<T>(odacQueryParams.command.toUpperCase(), odacQueryParams.bindParameters, {
