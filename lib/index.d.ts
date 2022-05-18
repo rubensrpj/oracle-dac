@@ -2,12 +2,16 @@ declare namespace Odac {
     const odacNUMBER: number;
     const odacSTRING: number;
     const odacDATE: number;
+    const odacBIND_IN: number;
+    const odacBIND_INOUT: number;
+    const odacBIND_OUT: number;
     type OdacConnectParams = {
         user: string;
         password: string;
         connectString: string;
     };
     type OdacBindParameters = Record<string, {
+        dir: number;
         type: number | string | undefined;
         val: any;
     }>;
