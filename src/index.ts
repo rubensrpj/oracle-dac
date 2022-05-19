@@ -41,7 +41,7 @@ namespace Odac {
     /**
     * Params for Execute
     */
-    export type OdacExecuteParams = { command: string, bindParameters: OdacBindParameters[], autoCommit: boolean | true };
+    export type OdacExecuteParams = { command: string, bindParameters: OdacBindParameters, autoCommit: boolean | true };
 
     /**
     * Class for working with Oracle Database
