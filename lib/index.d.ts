@@ -25,7 +25,7 @@ declare namespace Odac {
     };
     type OdacExecuteParams = {
         command: string;
-        bindParameters: OdacBindParameters[];
+        bindParameters: OdacBindParameters;
         autoCommit: boolean | true;
     };
     class OdacConnection {
