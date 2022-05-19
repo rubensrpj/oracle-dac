@@ -1,3 +1,4 @@
+import OracleDB from 'oracledb';
 declare namespace Odac {
     const odacNUMBER: number;
     const odacSTRING: number;
@@ -10,18 +11,21 @@ declare namespace Odac {
         password: string;
         connectString: string;
     };
-    type OdacBindParameters = Record<string, {
-        dir: number;
-        type: number | string | undefined;
-        val: any;
-    }>;
+    interface OdacBindParameter extends OracleDB.BindParameter {
+        dir?: number | undefined;
+        maxArraySize?: number | undefined;
+        maxSize?: number | undefined;
+        type?: number | string | undefined;
+        val?: any;
+    }
+    type OdacBindParameters = Record<string, OdacBindParameter | number | string | Date | null | undefined>;
     type OdacQueryParams = {
         command: string;
-        bindParameters: OdacBindParameters | OdacBindParameters[];
+        bindParameters: OdacBindParameters;
     };
     type OdacExecuteParams = {
         command: string;
-        bindParameters: OdacBindParameters | OdacBindParameters[];
+        bindParameters: OdacBindParameters[];
         autoCommit: boolean | true;
     };
     class OdacConnection {

@@ -20,18 +20,28 @@ namespace Odac {
     /**
      * Bind Params for commands
      */
-     export type OdacBindParameters = Record<string, { dir?: number; type: number | string | undefined, val: any }>;
+    export interface OdacBindParameter extends OracleDB.BindParameter {
+        dir?: number | undefined;
+        maxArraySize?: number | undefined;
+        maxSize?: number | undefined;
+        type?: number | string | undefined;
+        val?: any;
+    };
 
+    /**
+     * Bind Params for commands
+     */
+    export type OdacBindParameters = Record<string, OdacBindParameter | number | string | Date | null | undefined>;
 
     /**
     * Params for Query
     */
-    export type OdacQueryParams = { command: string, bindParameters: OdacBindParameters | OdacBindParameters[]};
+    export type OdacQueryParams = { command: string, bindParameters: OdacBindParameters };
 
     /**
     * Params for Execute
     */
-    export type OdacExecuteParams = { command: string, bindParameters: OdacBindParameters | OdacBindParameters[], autoCommit: boolean | true  };
+    export type OdacExecuteParams = { command: string, bindParameters: OdacBindParameters[], autoCommit: boolean | true };
 
     /**
     * Class for working with Oracle Database
@@ -89,7 +99,7 @@ namespace Odac {
         sql<T>(odacQueryParams: OdacQueryParams): Promise<T[] | undefined>;
         execute(odacExecuteParams: OdacExecuteParams): Promise<number>;
         executeMany(odacExecuteParams: OdacExecuteParams): Promise<number>;
-        nextVal(sequenceName : string): Promise<number>;
+        nextVal(sequenceName: string): Promise<number>;
     }
     class OdacQuery implements IOdacQuery {
 
@@ -99,7 +109,7 @@ namespace Odac {
             this.connection = connection;
         }
 
-        public async nextVal(sequenceName : string): Promise<number> {
+        public async nextVal(sequenceName: string): Promise<number> {
             return await this.connection
                 .execute(`SELECT ${sequenceName}.NEXTVAL AS SEQUENCE FROM DUAL`, [], {
                     outFormat: OracleDB.OUT_FORMAT_OBJECT,
@@ -115,13 +125,13 @@ namespace Odac {
 
         public async sql<T>(odacQueryParams: OdacQueryParams): Promise<T[] | undefined> {
             return await this.connection
-                .execute<T>(odacQueryParams.command.toUpperCase(),  (odacQueryParams.bindParameters as OracleDB.BindParameters), {
+                .execute<T>(odacQueryParams.command.toUpperCase(), odacQueryParams.bindParameters, {
                     outFormat: OracleDB.OUT_FORMAT_OBJECT,
                 }).then((resul) => {
                     return resul.rows
                 })
                 .catch((error) => {
-                    console.error(['query<T>', error, odacQueryParams.command.toUpperCase(), odacQueryParams.bindParameters]);
+                    console.error(['query<T>', odacQueryParams.command.toUpperCase(), odacQueryParams.bindParameters, error,]);
                     throw new Error(error);
                 });
         }
@@ -135,7 +145,7 @@ namespace Odac {
                     else return Promise.resolve(resultado.rowsAffected);
                 })
                 .catch((error) => {
-                    console.error(['execute', error, odacExecuteParams.command.toUpperCase(), odacExecuteParams.bindParameters]);
+                    console.error(['execute', odacExecuteParams.command.toUpperCase(), odacExecuteParams.bindParameters, error]);
                     throw new Error(error);
                 });
         }
@@ -148,7 +158,7 @@ namespace Odac {
                     else return Promise.resolve(resultado.rowsAffected);
                 })
                 .catch((error) => {
-                    console.error(['executeMany', error, odacExecuteParams.command.toUpperCase(), odacExecuteParams.bindParameters]);
+                    console.error(['executeMany', odacExecuteParams.command.toUpperCase(), odacExecuteParams.bindParameters, error]);
                     throw new Error(error);
                 });
         }
