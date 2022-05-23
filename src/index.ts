@@ -113,9 +113,11 @@ namespace Odac {
             return await this.connection
                 .execute(`SELECT ${sequenceName}.NEXTVAL AS SEQUENCE FROM DUAL`, [], {
                     outFormat: OracleDB.OUT_FORMAT_OBJECT,
-                }).then((resul) => {
-                    if (resul.rows) return Number(resul.rows[0]);
-                    else return 0
+                }).then((result) => {
+                    if (result.rows) 
+                        return (result.rows[0] as  { SEQUENCE: number } ).SEQUENCE;
+                    else 
+                        return -1
                 })
                 .catch((error) => {
                     console.error(['nextVal', error, sequenceName]);
