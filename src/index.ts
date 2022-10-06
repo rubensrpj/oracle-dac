@@ -114,9 +114,9 @@ namespace Odac {
                 .execute(`SELECT ${sequenceName}.NEXTVAL AS SEQUENCE FROM DUAL`, [], {
                     outFormat: OracleDB.OUT_FORMAT_OBJECT,
                 }).then((result) => {
-                    if (result.rows) 
-                        return (result.rows[0] as  { SEQUENCE: number } ).SEQUENCE;
-                    else 
+                    if (result.rows)
+                        return (result.rows[0] as { SEQUENCE: number }).SEQUENCE;
+                    else
                         return -1
                 })
                 .catch((error) => {
@@ -127,13 +127,13 @@ namespace Odac {
 
         public async sql<T>(odacQueryParams: OdacQueryParams): Promise<T[] | undefined> {
             return await this.connection
-                .execute<T>(odacQueryParams.command.toUpperCase(), odacQueryParams.bindParameters, {
+                .execute<T>(odacQueryParams.command, odacQueryParams.bindParameters, {
                     outFormat: OracleDB.OUT_FORMAT_OBJECT,
                 }).then((resul) => {
                     return resul.rows
                 })
                 .catch((error) => {
-                    console.error(['query<T>', odacQueryParams.command.toUpperCase(), odacQueryParams.bindParameters, error,]);
+                    console.error(['query<T>', odacQueryParams.command, odacQueryParams.bindParameters, error,]);
                     throw new Error(error);
                 });
         }
@@ -141,26 +141,26 @@ namespace Odac {
 
         public async execute(odacExecuteParams: OdacExecuteParams): Promise<number> {
             return await this.connection
-                .execute(odacExecuteParams.command.toUpperCase(), (odacExecuteParams.bindParameters as OracleDB.BindParameters), { autoCommit: odacExecuteParams.autoCommit })
+                .execute(odacExecuteParams.command, (odacExecuteParams.bindParameters as OracleDB.BindParameters), { autoCommit: odacExecuteParams.autoCommit })
                 .then((resultado) => {
                     if (resultado.rowsAffected === undefined) return 0;
                     else return Promise.resolve(resultado.rowsAffected);
                 })
                 .catch((error) => {
-                    console.error(['execute', odacExecuteParams.command.toUpperCase(), odacExecuteParams.bindParameters, error]);
+                    console.error(['execute', odacExecuteParams.command, odacExecuteParams.bindParameters, error]);
                     throw new Error(error);
                 });
         }
 
         public async executeMany(odacExecuteParams: OdacExecuteParams): Promise<number> {
             return await this.connection
-                .executeMany(odacExecuteParams.command.toUpperCase(), (odacExecuteParams.bindParameters as OracleDB.BindParameters) as BindParameters[], { autoCommit: odacExecuteParams.autoCommit })
+                .executeMany(odacExecuteParams.command, (odacExecuteParams.bindParameters as OracleDB.BindParameters) as BindParameters[], { autoCommit: odacExecuteParams.autoCommit })
                 .then((resultado) => {
                     if (resultado.rowsAffected === undefined) return 0;
                     else return Promise.resolve(resultado.rowsAffected);
                 })
                 .catch((error) => {
-                    console.error(['executeMany', odacExecuteParams.command.toUpperCase(), odacExecuteParams.bindParameters, error]);
+                    console.error(['executeMany', odacExecuteParams.command, odacExecuteParams.bindParameters, error]);
                     throw new Error(error);
                 });
         }
