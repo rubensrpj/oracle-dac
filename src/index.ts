@@ -1,4 +1,4 @@
-import OracleDB, { BindParameters, Connection } from 'oracledb';
+import OracleDB, {BindParameters, Connection} from 'oracledb';
 
 namespace Odac {
 
@@ -13,8 +13,8 @@ namespace Odac {
     export const odacBIND_OUT = OracleDB.BIND_OUT;
 
     /**
-    * Params for the ODAC connection
-    */
+     * Params for the ODAC connection
+     */
     export type OdacConnectParams = { user: string, password: string, connectString: string };
 
     /**
@@ -34,26 +34,22 @@ namespace Odac {
     export type OdacBindParameters = Record<string, OdacBindParameter | number | string | Date | null | undefined>;
 
     /**
-    * Params for Query
-    */
+     * Params for Query
+     */
     export type OdacQueryParams = { command: string, bindParameters: OdacBindParameters };
 
     /**
-    * Params for Execute
-    */
+     * Params for Execute
+     */
     export type OdacExecuteParams = { command: string, bindParameters: OdacBindParameters, autoCommit: boolean | true };
 
     /**
-    * Class for working with Oracle Database
-    */
+     * Class for working with Oracle Database
+     */
     export class OdacConnection {
 
         private odacConnectParams: OdacConnectParams | undefined;
         private connection: Connection | undefined;
-
-        public static async open(odacConnectParams: OdacConnectParams): Promise<OdacConnection> {
-            return await (new OdacConnection()).build(odacConnectParams);
-        }
 
         protected async build(odacConnectParams: OdacConnectParams): Promise<OdacConnection> {
             this.odacConnectParams = odacConnectParams;
@@ -71,6 +67,10 @@ namespace Odac {
                     throw new Error(error);
                 });
             return this
+        }
+
+        public static async open(odacConnectParams: OdacConnectParams): Promise<OdacConnection> {
+            return await (new OdacConnection()).build(odacConnectParams);
         }
 
         public async close(): Promise<void> {
@@ -96,11 +96,17 @@ namespace Odac {
     }
 
     export interface IOdacQuery {
-        sql<T>(odacQueryParams: OdacQueryParams): Promise<T[] | undefined>;
+        sql<T>(odacQueryParams: OdacQueryParams): Promise<T[]>;
+
+        sqlFirst<T>(odacQueryParams: OdacQueryParams): Promise<T | undefined>;
+
         execute(odacExecuteParams: OdacExecuteParams): Promise<number>;
+
         executeMany(odacExecuteParams: OdacExecuteParams): Promise<number>;
+
         nextVal(sequenceName: string): Promise<number>;
     }
+
     class OdacQuery implements IOdacQuery {
 
         private connection: OracleDB.Connection;
@@ -125,8 +131,8 @@ namespace Odac {
                 });
         }
 
-        public async sql<T>(odacQueryParams: OdacQueryParams): Promise<T[] | undefined> {
-            return await this.connection
+        public async sql<T>(odacQueryParams: OdacQueryParams): Promise<T[]> {
+            const queryData = await this.connection
                 .execute<T>(odacQueryParams.command, odacQueryParams.bindParameters, {
                     outFormat: OracleDB.OUT_FORMAT_OBJECT,
                 }).then((resul) => {
@@ -136,12 +142,37 @@ namespace Odac {
                     console.error(['query<T>', odacQueryParams.command, odacQueryParams.bindParameters, error,]);
                     throw new Error(error);
                 });
+            if (queryData === undefined)
+                return [];
+            else {
+                return queryData;
+            }
         }
 
+        public async sqlFirst<T>(odacQueryParams: OdacQueryParams): Promise<T | undefined> {
+            const queryData = await this.connection
+                .execute<T>(odacQueryParams.command, odacQueryParams.bindParameters, {
+                    outFormat: OracleDB.OUT_FORMAT_OBJECT,
+                }).then((resul) => {
+                    return resul.rows
+                })
+                .catch((error) => {
+                    console.error(['query<T>', odacQueryParams.command, odacQueryParams.bindParameters, error,]);
+                    throw new Error(error);
+                });
+            if (queryData === undefined)
+                return undefined;
+            else {
+                if (queryData.length > 0)
+                    return queryData[0];
+                else
+                    return undefined
+            }
+        }
 
         public async execute(odacExecuteParams: OdacExecuteParams): Promise<number> {
             return await this.connection
-                .execute(odacExecuteParams.command, (odacExecuteParams.bindParameters as OracleDB.BindParameters), { autoCommit: odacExecuteParams.autoCommit })
+                .execute(odacExecuteParams.command, (odacExecuteParams.bindParameters as OracleDB.BindParameters), {autoCommit: odacExecuteParams.autoCommit})
                 .then((resultado) => {
                     if (resultado.rowsAffected === undefined) return 0;
                     else return Promise.resolve(resultado.rowsAffected);
@@ -154,7 +185,7 @@ namespace Odac {
 
         public async executeMany(odacExecuteParams: OdacExecuteParams): Promise<number> {
             return await this.connection
-                .executeMany(odacExecuteParams.command, (odacExecuteParams.bindParameters as OracleDB.BindParameters) as BindParameters[], { autoCommit: odacExecuteParams.autoCommit })
+                .executeMany(odacExecuteParams.command, (odacExecuteParams.bindParameters as OracleDB.BindParameters) as BindParameters[], {autoCommit: odacExecuteParams.autoCommit})
                 .then((resultado) => {
                     if (resultado.rowsAffected === undefined) return 0;
                     else return Promise.resolve(resultado.rowsAffected);
