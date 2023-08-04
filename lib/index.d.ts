@@ -31,14 +31,15 @@ declare namespace Odac {
     class OdacConnection {
         private odacConnectParams;
         private connection;
-        static open(odacConnectParams: OdacConnectParams): Promise<OdacConnection>;
         protected build(odacConnectParams: OdacConnectParams): Promise<OdacConnection>;
+        static open(odacConnectParams: OdacConnectParams): Promise<OdacConnection>;
         close(): Promise<void>;
         private getConnection;
         getNewQuery(): IOdacQuery;
     }
     interface IOdacQuery {
-        sql<T>(odacQueryParams: OdacQueryParams): Promise<T[] | undefined>;
+        sql<T>(odacQueryParams: OdacQueryParams): Promise<T[]>;
+        sqlFirst<T>(odacQueryParams: OdacQueryParams): Promise<T | undefined>;
         execute(odacExecuteParams: OdacExecuteParams): Promise<number>;
         executeMany(odacExecuteParams: OdacExecuteParams): Promise<number>;
         nextVal(sequenceName: string): Promise<number>;
